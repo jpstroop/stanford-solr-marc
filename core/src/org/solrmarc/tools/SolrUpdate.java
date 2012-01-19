@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.solrmarc.tools.GetDefaultConfig;
+import org.solrmarc.tools.JarUtils;
 
 
 public class SolrUpdate
@@ -27,18 +27,14 @@ public class SolrUpdate
             for (String arg : args)
             {
                 if (arg.startsWith("http"))
-                {
                     solrServerURL = arg;
-                }
                 if (arg.equals("-v"))
-                {
                     verbose = true;
-                }
             }
         }
         if (solrServerURL == null)
         {
-            String configProperties = GetDefaultConfig.getConfigName(null);
+            String configProperties = JarUtils.getConfigPropsFnameFromManifest(null);
             if (configProperties != null)
             {
                 String homeDir = getHomeDir();
@@ -74,13 +70,14 @@ public class SolrUpdate
     
     private static String getHomeDir()
     {
-        String result = GetDefaultConfig.getJarFileName();       
+        String result = JarUtils.getJarFileName();       
         if (result == null)
         {
             result = new File(".").getAbsolutePath();
             logger.debug("Setting homeDir to \".\"");
         }
-        if (result != null) result = new File(result).getParent();
+        if (result != null) 
+        	result = new File(result).getParent();
         logger.debug("Setting homeDir to: "+ result);
         return(result);
     }
