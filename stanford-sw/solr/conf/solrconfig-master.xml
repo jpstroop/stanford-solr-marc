@@ -12,7 +12,7 @@
 
   <indexDefaults>
     <useCompoundFile>false</useCompoundFile>
-    <mergeFactor>10</mergeFactor>
+    <mergeFactor>8</mergeFactor>
     <reopenReaders>true</reopenReaders>
 
     <!--
@@ -32,7 +32,7 @@
     <!-- options specific to the main on-disk lucene index -->
     <useCompoundFile>false</useCompoundFile>
     <ramBufferSizeMB>128</ramBufferSizeMB>
-    <mergeFactor>10</mergeFactor>
+    <mergeFactor>8</mergeFactor>
 <!--
     <maxMergeDocs>2147483647</maxMergeDocs>
 -->
@@ -74,7 +74,7 @@
   <!-- Let the dispatch filter handler /select?qt=XXX -->
   <requestDispatcher handleSelect="true" >
     <!--Make sure your system has some authentication before enabling remote streaming!  -->
-    <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048" />
+    <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048000" />
     <httpCaching lastModifiedFrom="openTime" etagSeed="Solr" />
   </requestDispatcher>
 
@@ -1147,8 +1147,15 @@
   <requestHandler name="/update" class="solr.XmlUpdateRequestHandler" startup="lazy"/>
   <requestHandler name="/update/javabin" class="solr.BinaryUpdateRequestHandler" startup="lazy"/>
   <requestHandler name="/admin/" class="org.apache.solr.handler.admin.AdminHandlers" />
+  <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
+    <lst name="invariants">
+      <str name="q">ping test query</str>
+      <str name="qt">search</str>
+    </lst>
+  </requestHandler>
+
   <admin>
-    <defaultQuery>id:666</defaultQuery>
+    <defaultQuery>admin test query</defaultQuery>
   </admin>
 
 </config>
