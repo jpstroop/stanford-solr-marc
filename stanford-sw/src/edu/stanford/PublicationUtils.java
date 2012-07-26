@@ -46,9 +46,9 @@ public class PublicationUtils {
 				char sfcode = sf.getCode();
 				String sfdata = sf.getData();
 				boolean addIt = false;
-				if (sfcode == 'a' && !sfdata.matches("(?i).*s\\.l\\..*") && !sfdata.matches("(?i).*place of publication not identified.*"))
+				if (sfcode == 'a' && !sfdata.matches("(?i).*s\\.l\\..*") && !sfdata.matches("(?i).*place of .* not identified.*"))
 					addIt = true;
-				else if (sfcode == 'b' && !sfdata.matches("(?i).*s\\.n\\..*") && !sfdata.matches("(?i).*publisher not identified.*"))
+				else if (sfcode == 'b' && !sfdata.matches("(?i).*s\\.n\\..*") && !sfdata.matches("(?i).*r not identified.*"))
 					addIt = true;
 				if (addIt)
 				{
@@ -258,26 +258,6 @@ public class PublicationUtils {
 				return dateToCheck;
 			else {
 				// try to correct year < lowerLimit
-
-				if (df264list.size() == 1)
-				{
-					DataField df264 = df264list.get(0);
-					char ind2 = df264.getIndicator2();
-					if (ind2 == '1')
-					{
-						List<String> subcList = MarcUtils.getSubfieldStrings(df264, 'c');
-						for (String date264cStr : subcList)
-						{
-							int date264int = Integer.parseInt(DateUtils.cleanDate(date264cStr));
-		    				if (date264int != 0 &&
-		    						date264int <= upperLimit && date264int >= lowerLimit)
-		    						return date264cStr;
-						}
-					}
-				}
-
-
-// FIXME:  264 logic goes here
 				String usable264cdateStr = null;
 				for (DataField df264 : df264list)
 				{
@@ -285,25 +265,32 @@ public class PublicationUtils {
 					List<String> subcList = MarcUtils.getSubfieldStrings(df264, 'c');
 					for (String date264cStr : subcList)
 					{
-						int date264int = Integer.parseInt(DateUtils.cleanDate(date264cStr));
-	    				if (date264int != 0 &&
-	    					date264int <= upperLimit && date264int >= lowerLimit)
-	    				{
-	    					if (ind2 == '1')
-		    					return date264cStr;
-	    					else
-	    						usable264cdateStr = date264cStr;
-	    				}
+						try
+						{
+							int date264int = Integer.parseInt(DateUtils.getYearFromString(date264cStr));
+		    				if (date264int != 0 &&
+		    					date264int <= upperLimit && date264int >= lowerLimit)
+		    				{
+		    					String yearStr = String.valueOf(date264int);
+		    					if (ind2 == '1')
+			    					return yearStr;
+		    					else if (usable264cdateStr == null)
+		    						usable264cdateStr = yearStr;
+		    				}
+						}
+						catch (NumberFormatException e)
+						{
+						}
 					}
+				}
+				if (date260c != null) {
+					int date260int = Integer.parseInt(DateUtils.getYearFromString(date260c));
+    				if (date260int != 0 &&
+    					date260int <= upperLimit && date260int >= lowerLimit)
+						return String.valueOf(date260int);
 				}
 				if (usable264cdateStr != null)
 					return usable264cdateStr;
-				if (date260c != null) {
-					int date260int = Integer.parseInt(date260c);
-    				if (date260int != 0 &&
-    					date260int <= upperLimit && date260int >= lowerLimit)
-						return date260c;
-				}
 			}
 		}
 		return null;
