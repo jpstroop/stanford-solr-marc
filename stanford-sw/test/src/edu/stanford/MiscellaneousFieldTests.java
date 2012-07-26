@@ -26,8 +26,9 @@ public class MiscellaneousFieldTests extends AbstractStanfordTest
 	public final void testId()
 		throws ParserConfigurationException, SAXException, IOException, SolrServerException
 	{
+		closeSolrProxy();  // need to reset the solrProxy to get the right request handling
+		createFreshIx("idTests.mrc", true, false);
 		String fldName = "id";
-		createFreshIx("idTests.mrc");
 
         int numDocs = getNumMatchingDocs("collection", "sirsi");
         assertEquals("Number of documents in index incorrect: ", 3, numDocs);
@@ -117,7 +118,8 @@ public class MiscellaneousFieldTests extends AbstractStanfordTest
 	public final void testDisplayTypeField()
 	    throws ParserConfigurationException, IOException, SAXException, SolrServerException
 	{
-		createFreshIx("idTests.mrc");
+		closeSolrProxy();  // need to reset the solrProxy to get the right request handling
+		createFreshIx("idTests.mrc", true, false);
 	    String fldName = "display_type";
 
 	    // all MARC records from Symphony
