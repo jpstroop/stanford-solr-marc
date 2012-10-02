@@ -127,6 +127,18 @@ public class PublicationUtilsUnitTests
 	{
 		ControlField f008 = factory.newControlField("008", "      b196u    ");
 		assertSingleResult(getPubDateSliderVals(f008, null, null), "1960");
+
+		f008 = factory.newControlField("008", "041202s20uu    mdunnn  s      f    eng d");
+		assertSingleResult(getPubDateSliderVals(f008, null, null), "2000");
+
+		f008 = factory.newControlField("008", "780930c00uu9999nyu           000 0 eng d");
+		assertEquals("getPubDateSliderVals should have no results if bad 008 and no other options", 0, getPubDateSliderVals(f008, null, null).size());
+
+		f008 = factory.newControlField("008", "780930c0197    nyu           000 0 eng d");
+		assertEquals("getPubDateSliderVals should have no results if bad 008 and no other options", 0, getPubDateSliderVals(f008, null, null).size());
+
+		f008 = factory.newControlField("008", "780930c0059    nyu           000 0 eng d");
+		assertEquals("getPubDateSliderVals should have no results if bad 008 and no other options", 0, getPubDateSliderVals(f008, null, null).size());
 	}
 @Test
 	public void test008DDUUForPubDateSlider()
@@ -134,12 +146,16 @@ public class PublicationUtilsUnitTests
 		ControlField f008 = factory.newControlField("008", "      b19uu    ");
 		assertSingleResult(getPubDateSliderVals(f008, null, null), "1900");
 	}
+
 @Test
 	public void test008DUUUForPubDateSlider()
 	{
 		ControlField f008 = factory.newControlField("008", "      b1uuu    ");
 		Set<String> result = getPubDateSliderVals(f008, null, null);
 		assertEquals("getPubDateSliderVals should have no results from 008 bytes 7-10 when duuu and no other options", 0, result.size());
+
+		f008 = factory.newControlField("008", "041202s2uuu    mdunnn  s      f    eng d");
+		assertEquals("getPubDateSliderVals should have no results if uuu date and no other options", 0, getPubDateSliderVals(f008, null, null).size());
 	}
 
 @Test
