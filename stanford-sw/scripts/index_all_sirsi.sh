@@ -58,6 +58,18 @@ curl http://sw-solr-gen:8983/solr/update -H 'Content-type:text/xml; charset=utf-
 curl http://sw-solr-gen:8983/solr/update -H 'Content-type:text/xml; charset=utf-8' --data-binary @/data/image_gallery/kolb/KolbSolrDocs_20110722_0001.xml
 curl http://sw-solr-gen:8983/solr/update?commit=true -H 'Content-type:text/xml; charset=utf-8' --data-binary @/data/image_gallery/kolb/KolbSolrDocs_20110722_0002.xml
 
+# include latest course reserves data if not doing incr updates immediately
+JRUBY_OPTS="--1.9"
+export JRUBY_OPTS
+#( cd /home/blacklight/crez-sw-ingest && source ./.rvmrc && ./bin/pull_and_index_latest -s prod )
+
 echo "!!! RUN SEARCHWORKS TESTS before putting index into production !!!"
+echo "!!! CHGRP before putting index into production !!!"
+
+# email the log files
+#cat $LOG_DIR/log* | mailx -s 'full reindex log messages' (email address here)
+
+# email the solr log messages
+#$SOLRMARC_BASEDIR/stanford-sw/scripts/grep_and_email_tomcat_log.sh
 
 exit 0
